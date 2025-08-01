@@ -1,0 +1,62 @@
+nohup: ignoring input
+╭──────────────────────────────╮
+│ 🌐 Starting Web Interface... │
+╰──────────────────────────────╯
+Starting web server on 0.0.0.0:12000
+Initializing Novel AI Agent...
+Warning: Cannot connect to LLM service. Please ensure Ollama is running.
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Warning: Could not parse structured response: ...
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Warning: Could not parse structured response: ...
+Creating character agents...
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Warning: Could not parse structured response: ...
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Warning: Could not parse structured response: ...
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Warning: Could not parse structured response: ...
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Warning: Could not parse structured response: ...
+Error calling Ollama: Cannot connect to host localhost:11434 ssl:default 
+[Connect call failed ('127.0.0.1', 11434)]
+Created 4 character agents
+Novel AI Agent initialized successfully!
+INFO:     Started server process [3472]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:12000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56360 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     10.2.94.131:45224 - "GET / HTTP/1.1" 200 OK
+INFO:     10.2.94.131:45224 - "GET /api/story/progress HTTP/1.1" 200 OK
+INFO:     10.2.14.9:39992 - "WebSocket /ws" [accepted]
+INFO:     connection open
+INFO:     10.2.94.131:45224 - "GET /api/characters HTTP/1.1" 200 OK
+INFO:     10.2.94.131:45224 - "GET /api/world HTTP/1.1" 200 OK
+INFO:     10.2.94.131:45224 - "GET /api/evolution HTTP/1.1" 200 OK
+INFO:     10.2.94.131:47860 - "GET /api/story/progress HTTP/1.1" 200 OK
+INFO:     10.2.94.131:47860 - "GET /api/characters HTTP/1.1" 200 OK
+INFO:     10.2.94.131:47860 - "GET /api/world HTTP/1.1" 200 OK
+INFO:     10.2.94.131:47860 - "GET /api/evolution HTTP/1.1" 200 OK
+INFO:     10.2.94.131:52082 - "GET /api/story/progress HTTP/1.1" 200 OK
+INFO:     10.2.94.131:52082 - "GET /api/characters HTTP/1.1" 200 OK
+INFO:     10.2.94.131:52082 - "GET /api/world HTTP/1.1" 200 OK
+INFO:     10.2.94.131:52082 - "GET /api/evolution HTTP/1.1" 200 OK
+INFO:     10.2.94.131:50822 - "GET /api/story/progress HTTP/1.1" 200 OK
+INFO:     10.2.94.131:50822 - "GET /api/characters HTTP/1.1" 200 OK
+INFO:     10.2.94.131:50822 - "GET /api/world HTTP/1.1" 200 OK
+INFO:     10.2.94.131:50822 - "GET /api/evolution HTTP/1.1" 200 OK

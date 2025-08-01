@@ -1,0 +1,38 @@
+# Novel AI Agent Configuration
+llm:
+  provider: "ollama"
+  model: "llama3"
+  base_url: "http://localhost:11434"
+  temperature: 0.8
+  max_tokens: 4096
+
+story:
+  target_length: 5000000  # 5 million words
+  chapter_length: 5000    # words per chapter
+  save_interval: 1000     # save every N words
+  output_dir: "output"
+  
+agents:
+  max_agents: 10
+  director_enabled: true
+  character_types:
+    - "protagonist"
+    - "antagonist"
+    - "supporting"
+    - "narrator"
+
+evolution:
+  enabled: true
+  mutation_rate: 0.1
+  evaluation_interval: 10000  # words
+  backup_generations: 5
+  
+simulation:
+  world_complexity: "medium"
+  event_frequency: 0.3
+  environment_changes: true
+  
+web_interface:
+  host: "0.0.0.0"
+  port: 12000
+  enable_cors: true
