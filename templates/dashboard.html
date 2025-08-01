@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transition: width 0.3s ease;
+        }
+        
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .stat:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #4299e1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3182ce;
+        }
+        
+        .btn-secondary {
+            background: #a0aec0;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #718096;
+        }
+        
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #38a169;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background: #48bb78;
+        }
+        
+        .status-inactive {
+            background: #a0aec0;
+        }
+        
+        .status-error {
+            background: #f56565;
+        }
+        
+        .content-preview {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .character-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .character-item {
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .character-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .character-type {
+            font-size: 0.9em;
+            color: #718096;
+            text-transform: capitalize;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #f56565;
+            background: #fed7d7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Novel AI Agent</h1>
+            <p>Self-improving long-form story generation system</p>
+        </div>
+        
+        <div class="dashboard">
+            <!-- Story Progress Card -->
+            <div class="card">
+                <h3>📖 Story Progress</h3>
+                <div class="stat">
+                    <span class="stat-label">Status:</span>
+                    <span class="stat-value">
+                        <span class="status-indicator status-inactive" id="generation-status"></span>
+                        <span id="generation-status-text">Initializing...</span>
+                    </span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Word Count:</span>
+                    <span class="stat-value" id="word-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Current Chapter:</span>
+                    <span class="stat-value" id="current-chapter">1</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Progress:</span>
+                    <span class="stat-value" id="progress-percentage">0%</span>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-success" onclick="startGeneration()">Start Generation</button>
+                    <button class="btn btn-secondary" onclick="pauseGeneration()">Pause</button>
+                </div>
+            </div>
+            
+            <!-- Characters Card -->
+            <div class="card">
+                <h3>👥 Characters</h3>
+                <div class="stat">
+                    <span class="stat-label">Active Characters:</span>
+                    <span class="stat-value" id="character-count">0</span>
+                </div>
+                <div class="character-list" id="character-list">
+                    <div class="loading">Loading characters...</div>
+                </div>
+            </div>
+            
+            <!-- World Simulation Card -->
+            <div class="card">
+                <h3>🌍 World Simulation</h3>
+                <div class="stat">
+                    <span class="stat-label">World Type:</span>
+                    <span class="stat-value" id="world-type">Unknown</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Locations:</span>
+                    <span class="stat-value" id="locations-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Active Events:</span>
+                    <span class="stat-value" id="active-events">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">World Mood:</span>
+                    <span class="stat-value" id="world-mood">Neutral</span>
+                </div>
+            </div>
+            
+            <!-- Code Evolution Card -->
+            <div class="card">
+                <h3>🧬 Code Evolution</h3>
+                <div class="stat">
+                    <span class="stat-label">Status:</span>
+                    <span class="stat-value">
+                        <span class="status-indicator status-inactive" id="evolution-status"></span>
+                        <span id="evolution-status-text">Disabled</span>
+                    </span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Generation:</span>
+                    <span class="stat-value" id="evolution-generation">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Evolutions:</span>
+                    <span class="stat-value" id="total-evolutions">0</span>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="triggerEvolution()">Trigger Evolution</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Content Card -->
+        <div class="card">
+            <h3>📝 Recent Content</h3>
+            <div class="content-preview" id="recent-content">
+                <div class="loading">Loading recent content...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = function() {
+                console.log('WebSocket connected');
+            };
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'status_update') {
+                    updateDashboard(data.data);
+                }
+            };
+            
+            ws.onclose = function() {
+                console.log('WebSocket disconnected, attempting to reconnect...');
+                setTimeout(initWebSocket, 5000);
+            };
+            
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+        
+        // Update dashboard with new data
+        function updateDashboard(data) {
+            // Update story progress
+            document.getElementById('word-count').textContent = data.word_count?.toLocaleString() || '0';
+            document.getElementById('current-chapter').textContent = data.current_chapter || '1';
+            document.getElementById('progress-percentage').textContent = `${data.progress_percentage?.toFixed(1) || 0}%`;
+            document.getElementById('progress-fill').style.width = `${data.progress_percentage || 0}%`;
+            
+            // Update character count
+            document.getElementById('character-count').textContent = data.characters_count || '0';
+            
+            // Update evolution status
+            const evolutionEnabled = data.evolution_enabled;
+            const evolutionStatusEl = document.getElementById('evolution-status');
+            const evolutionTextEl = document.getElementById('evolution-status-text');
+            
+            if (evolutionEnabled) {
+                evolutionStatusEl.className = 'status-indicator status-active';
+                evolutionTextEl.textContent = 'Enabled';
+            } else {
+                evolutionStatusEl.className = 'status-indicator status-inactive';
+                evolutionTextEl.textContent = 'Disabled';
+            }
+        }
+        
+        // Load initial data
+        async function loadInitialData() {
+            try {
+                // Load story progress
+                const progressResponse = await fetch('/api/story/progress');
+                const progressData = await progressResponse.json();
+                if (progressData.success) {
+                    updateDashboard(progressData.data);
+                    
+                    // Update recent content
+                    const recentContent = progressData.data.recent_content || [];
+                    const contentEl = document.getElementById('recent-content');
+                    if (recentContent.length > 0) {
+                        contentEl.innerHTML = recentContent.map(content => 
+                            `<div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0;">${content.substring(0, 300)}...</div>`
+                        ).join('');
+                    } else {
+                        contentEl.innerHTML = '<div class="loading">No content generated yet</div>';
+                    }
+                }
+                
+                // Load characters
+                const charactersResponse = await fetch('/api/characters');
+                const charactersData = await charactersResponse.json();
+                if (charactersData.success) {
+                    const characterListEl = document.getElementById('character-list');
+                    const characters = charactersData.data || [];
+                    
+                    if (characters.length > 0) {
+                        characterListEl.innerHTML = characters.map(char => 
+                            `<div class="character-item">
+                                <div class="character-name">${char.agent_id}</div>
+                                <div class="character-type">${char.character_type}</div>
+                            </div>`
+                        ).join('');
+                    } else {
+                        characterListEl.innerHTML = '<div class="loading">No characters created yet</div>';
+                    }
+                }
+                
+                // Load world info
+                const worldResponse = await fetch('/api/world');
+                const worldData = await worldResponse.json();
+                if (worldData.success) {
+                    const world = worldData.data;
+                    document.getElementById('world-type').textContent = world.world_type || 'Unknown';
+                    document.getElementById('locations-count').textContent = world.locations_count || '0';
+                    document.getElementById('active-events').textContent = world.active_events_count || '0';
+                    document.getElementById('world-mood').textContent = world.world_mood || 'Neutral';
+                }
+                
+                // Load evolution status
+                const evolutionResponse = await fetch('/api/evolution');
+                const evolutionData = await evolutionResponse.json();
+                if (evolutionData.success) {
+                    const evolution = evolutionData.data;
+                    document.getElementById('evolution-generation').textContent = evolution.current_generation || '0';
+                    document.getElementById('total-evolutions').textContent = evolution.total_evolutions || '0';
+                }
+                
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+            }
+        }
+        
+        // Control functions
+        async function startGeneration() {
+            try {
+                const response = await fetch('/api/control/start', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Novel generation started!');
+                    document.getElementById('generation-status').className = 'status-indicator status-active';
+                    document.getElementById('generation-status-text').textContent = 'Generating...';
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error starting generation: ' + error.message);
+            }
+        }
+        
+        function pauseGeneration() {
+            alert('Pause functionality not implemented yet');
+        }
+        
+        async function triggerEvolution() {
+            try {
+                const response = await fetch('/api/control/evolve', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Code evolution triggered!');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error triggering evolution: ' + error.message);
+            }
+        }
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInitialData();
+            initWebSocket();
+            
+            // Refresh data every 30 seconds as fallback
+            setInterval(loadInitialData, 30000);
+        });
+    </script>
+</body>
+</html>
