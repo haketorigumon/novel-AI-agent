@@ -89,6 +89,21 @@ async def test_llm_client():
         )
         print("✅ LLM Client initialized")
         
+        # Test provider support
+        providers = LLMClient.get_supported_providers()
+        assert len(providers) >= 14, f"Expected at least 14 providers, got {len(providers)}"
+        assert "ollama" in providers
+        assert "openai" in providers
+        assert "anthropic" in providers
+        print(f"✅ Provider support verified ({len(providers)} providers)")
+        
+        # Test provider info
+        ollama_info = LLMClient.get_provider_info("ollama")
+        assert ollama_info["requires_api_key"] == False
+        openai_info = LLMClient.get_provider_info("openai")
+        assert openai_info["requires_api_key"] == True
+        print("✅ Provider information correct")
+        
         # Test connection (this will fail if Ollama is not running, but that's OK)
         async with client as c:
             connected = await c.check_connection()

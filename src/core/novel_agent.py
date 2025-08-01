@@ -41,10 +41,12 @@ class NovelAIAgent:
         console.print("[blue]Initializing Novel AI Agent...[/blue]")
         
         # Initialize LLM client
+        api_key = self.config.get_api_key_for_provider(self.config.llm.provider)
         self.llm_client = LLMClient(
             provider=self.config.llm.provider,
             model=self.config.llm.model,
             base_url=self.config.llm.base_url,
+            api_key=api_key,
             temperature=self.config.llm.temperature,
             max_tokens=self.config.llm.max_tokens
         )
