@@ -53,3 +53,45 @@ web_interface:
   host: "0.0.0.0"
   port: 12000
   enable_cors: true
+
+# Multi-Agent System Configuration
+multi_agent:
+  enabled: true
+  max_agents: 20
+  default_agent_types:
+    - "assistant"
+    - "expert"
+    - "creative"
+    - "task"
+  orchestration_strategy: "hierarchical"  # hierarchical, peer-to-peer, hybrid
+  memory_enabled: true
+  tool_usage_enabled: true
+  communication_logging: true
+  default_llm_temperature: 0.7
+  default_max_tokens: 2048
+  
+  # Agent creation settings
+  auto_create_agents: true
+  agent_creation_threshold: 0.7
+  
+  # Task management settings
+  task_decomposition_enabled: true
+  max_concurrent_tasks: 10
+  task_timeout_seconds: 300
+  
+  # Communication settings
+  broadcast_enabled: true
+  direct_communication_enabled: true
+  message_queue_size: 100
+  
+  # Memory settings
+  memory_retention_days: 30
+  memory_importance_threshold: 0.3
+  
+  # Tool settings
+  default_tools_enabled: true
+  tool_usage_logging: true
+  
+  # Web interface settings
+  web_visualization_enabled: true
+  agent_interaction_enabled: true
