@@ -288,3 +288,8 @@ INFO:     10.2.94.131:46194 - "GET /api/evolution HTTP/1.1" 200 OK
 INFO:     10.2.14.137:48854 - "GET /api/story/progress HTTP/1.1" 200 OK
 INFO:     10.2.14.137:48854 - "GET /api/characters HTTP/1.1" 200 OK
 INFO:     10.2.14.137:48854 - "GET /api/world HTTP/1.1" 200 OK
+INFO:     10.2.14.137:48854 - "GET /api/evolution HTTP/1.1" 200 OK
+INFO:     10.2.94.131:38696 - "GET /api/story/progress HTTP/1.1" 200 OK
+INFO:     10.2.94.131:38696 - "GET /api/characters HTTP/1.1" 200 OK
+INFO:     10.2.94.131:38696 - "GET /api/world HTTP/1.1" 200 OK
+INFO:     10.2.94.131:38696 - "GET /api/evolution HTTP/1.1" 200 OK
