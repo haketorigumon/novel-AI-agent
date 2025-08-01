@@ -1,6 +1,6 @@
 # Novel AI Agent 🤖
 
-Novel AI Agent是一款先进的 AI 代理，旨在通过代码演进生成长篇小说（五百万字以上），同时不断改进自身架构。现在它已升级为通用多智能体系统，可以处理各种任务。它集成了三项关键技术：
+Novel AI Agent 是一款先进的 AI 代理系统，专为生成长篇小说（五百万字以上）而设计，具备自我演进和持续改进的能力。现在它已升级为功能强大的通用多智能体系统，能够协作处理各种复杂任务。该系统集成了三项核心技术：
 
 ## 🌟 核心技术
 
@@ -51,8 +51,8 @@ Novel AI Agent是一款先进的 AI 代理，旨在通过代码演进生成长�
 ## 📦 安装
 
 ### 前置要求
-- Python 3.8+
-- [Ollama](https://ollama.ai/) (用于本地LLM)
+- Python 3.8+ (推荐 Python 3.9 或更高版本)
+- [Ollama](https://ollama.ai/) (用于本地LLM，可选)
 
 ### 快速安装
 ```bash
@@ -112,6 +112,8 @@ export GOOGLE_API_KEY="your_api_key_here"
 ## 🎯 使用方法
 
 ### 命令行界面
+
+所有命令都通过 [`main.py`](main.py) 文件执行。
 
 #### 小说生成
 
@@ -173,7 +175,7 @@ python main.py --help
 
 ### Web界面
 
-启动Web界面后，访问 http://localhost:12000 查看实时仪表板：
+启动Web界面后，在浏览器中访问 http://localhost:12000 查看实时仪表板：
 
 #### 小说生成界面
 - 📊 **故事进度**: 实时查看字数、章节、生成进度
@@ -190,7 +192,7 @@ python main.py --help
 
 ## ⚙️ 配置
 
-编辑 `config.yaml` 文件自定义设置：
+编辑 [`config.yaml`](config.yaml) 文件自定义设置：
 
 ```yaml
 # LLM配置
@@ -263,7 +265,7 @@ multi_agent:
 
 ## 🏗️ 架构
 
-```
+```text
 novel-AI-agent/
 ├── src/
 │   ├── core/                # 核心系统
@@ -451,10 +453,18 @@ async def custom_orchestration_strategy(self, task, available_agents):
 
 ## 📞 支持
 
-如有问题或建议，请：
-- 创建 [Issue](https://github.com/ineverxxx-max/novel-AI-agent/issues)
+如有问题或建议，欢迎通过以下方式联系我们：
+- 创建 [Issue](https://github.com/ineverxxx-max/novel-AI-agent/issues) 报告问题或提出功能建议
 - 发送邮件至项目维护者
-- 查看 [Wiki](https://github.com/ineverxxx-max/novel-AI-agent/wiki) 获取更多文档
+- 查看 [Wiki](https://github.com/ineverxxx-max/novel-AI-agent/wiki) 获取更多详细文档
+
+## 🚀 快速开始
+
+1. 克隆项目：`git clone https://github.com/ineverxxx-max/novel-AI-agent.git`
+2. 安装依赖：`./install.sh` 或手动安装
+3. 配置LLM提供商（推荐先使用 Ollama 本地模式）
+4. 运行：`python main.py generate` 开始生成小说
+5. 访问 Web 界面：http://localhost:12000
 
 ---
 
