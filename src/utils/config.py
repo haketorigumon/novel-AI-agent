@@ -3,14 +3,30 @@
 import yaml
 from pathlib import Path
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 class LLMConfig(BaseModel):
     provider: str = "ollama"
     model: str = "llama3"
-    base_url: str = "http://localhost:11434"
+    base_url: Optional[str] = "http://localhost:11434"
+    api_key: Optional[str] = None
     temperature: float = 0.8
     max_tokens: int = 4096
+
+class APIKeysConfig(BaseModel):
+    openai: Optional[str] = None
+    anthropic: Optional[str] = None
+    google: Optional[str] = None
+    azure: Optional[str] = None
+    cohere: Optional[str] = None
+    huggingface: Optional[str] = None
+    together: Optional[str] = None
+    groq: Optional[str] = None
+    deepseek: Optional[str] = None
+    moonshot: Optional[str] = None
+    zhipu: Optional[str] = None
+    baidu: Optional[str] = None
+    alibaba: Optional[str] = None
 
 class StoryConfig(BaseModel):
     target_length: int = 5000000
@@ -41,11 +57,25 @@ class WebInterfaceConfig(BaseModel):
 
 class Config(BaseModel):
     llm: LLMConfig = LLMConfig()
+    api_keys: APIKeysConfig = APIKeysConfig()
     story: StoryConfig = StoryConfig()
     agents: AgentsConfig = AgentsConfig()
     evolution: EvolutionConfig = EvolutionConfig()
     simulation: SimulationConfig = SimulationConfig()
     web_interface: WebInterfaceConfig = WebInterfaceConfig()
+    
+    def get_api_key_for_provider(self, provider: str) -> Optional[str]:
+        """Get API key for a specific provider"""
+        # First check if API key is specified in LLM config
+        if self.llm.api_key:
+            return self.llm.api_key
+        
+        # Then check provider-specific API keys
+        provider_key = getattr(self.api_keys, provider.lower(), None)
+        if provider_key:
+            return provider_key
+        
+        return None
 
     @classmethod
     def load(cls, config_path: str) -> 'Config':

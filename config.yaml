@@ -1,10 +1,27 @@
 # Novel AI Agent Configuration
 llm:
-  provider: "ollama"
+  provider: "ollama"  # Supported: ollama, openai, anthropic, google, azure, cohere, huggingface, together, groq, deepseek, moonshot, zhipu, baidu, alibaba
   model: "llama3"
-  base_url: "http://localhost:11434"
+  base_url: "http://localhost:11434"  # Optional: will use default if not specified
+  api_key: null  # Optional: will use environment variable if not specified
   temperature: 0.8
   max_tokens: 4096
+
+# API Keys Configuration (alternatively set as environment variables)
+api_keys:
+  openai: null  # Set OPENAI_API_KEY environment variable or specify here
+  anthropic: null  # Set ANTHROPIC_API_KEY environment variable or specify here
+  google: null  # Set GOOGLE_API_KEY environment variable or specify here
+  azure: null  # Set AZURE_API_KEY environment variable or specify here
+  cohere: null  # Set COHERE_API_KEY environment variable or specify here
+  huggingface: null  # Set HUGGINGFACE_API_KEY environment variable or specify here
+  together: null  # Set TOGETHER_API_KEY environment variable or specify here
+  groq: null  # Set GROQ_API_KEY environment variable or specify here
+  deepseek: null  # Set DEEPSEEK_API_KEY environment variable or specify here
+  moonshot: null  # Set MOONSHOT_API_KEY environment variable or specify here
+  zhipu: null  # Set ZHIPU_API_KEY environment variable or specify here
+  baidu: null  # Set BAIDU_API_KEY environment variable or specify here
+  alibaba: null  # Set ALIBABA_API_KEY environment variable or specify here
 
 story:
   target_length: 5000000  # 5 million words

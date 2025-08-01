@@ -25,7 +25,7 @@ Novel AI Agent是一款先进的 AI 代理，旨在通过代码演进生成长�
 - **动态世界**: 实时环境变化和事件生成
 - **自我进化**: 基于性能自动改进代码架构
 - **Web界面**: 实时监控和控制面板
-- **本地运行**: 使用Ollama和Llama 3本地模型
+- **多种LLM支持**: 支持Ollama、OpenAI、Anthropic、Google等14种LLM提供商
 
 ## 📦 安装
 
@@ -49,17 +49,44 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 安装Ollama和模型
+### 配置LLM提供商
+
+系统支持多种LLM提供商，选择其中一种即可：
+
+#### 选项1: Ollama (本地免费)
 ```bash
-# 安装Ollama (参考 https://ollama.ai/)
+# 安装Ollama
 curl -fsSL https://ollama.ai/install.sh | sh
 
-# 启动Ollama服务
+# 启动服务
 ollama serve
 
-# 下载Llama 3模型
+# 下载模型
 ollama pull llama3
 ```
+
+#### 选项2: OpenAI
+```bash
+export OPENAI_API_KEY="your_api_key_here"
+```
+
+#### 选项3: Anthropic Claude
+```bash
+export ANTHROPIC_API_KEY="your_api_key_here"
+```
+
+#### 选项4: Google Gemini
+```bash
+export GOOGLE_API_KEY="your_api_key_here"
+```
+
+#### 选项5: 其他提供商
+支持Groq、Together AI、DeepSeek、Moonshot等，详见[提供商配置指南](PROVIDER_GUIDE.md)
+
+**配置方法**:
+1. 设置环境变量（推荐）
+2. 编辑`config.yaml`文件
+3. 使用`.env`文件
 
 ## 🎯 使用方法
 
