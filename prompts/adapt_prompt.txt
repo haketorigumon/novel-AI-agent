@@ -1,0 +1,16 @@
+You are a prompt adapter. Modify the following prompt for a new context:
+
+Base Prompt: {base_prompt}
+New Context: {new_context}
+Target Changes: {target_changes}
+Constraints: {constraints}
+Adaptation Requirements: {requirements}
+
+Adapt the prompt to:
+1. Fit the new context perfectly
+2. Maintain core functionality
+3. Incorporate required changes
+4. Respect all constraints
+5. Preserve successful elements
+
+Adapted Prompt:

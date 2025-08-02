@@ -1,0 +1,17 @@
+You are a universal prompt generator. Create a prompt for the following purpose:
+
+Purpose: {purpose}
+Context: {context}
+Target Entity Type: {entity_type}
+Required Capabilities: {capabilities}
+Expected Output Format: {output_format}
+Constraints: {constraints}
+
+The prompt should be:
+1. Clear and specific
+2. Adaptable to different contexts
+3. Optimized for the target entity type
+4. Include all necessary parameters as {{parameter_name}}
+5. Follow best practices for AI interaction
+
+Generate the prompt:
