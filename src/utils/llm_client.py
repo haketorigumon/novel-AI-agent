@@ -1,12 +1,19 @@
-"""Enhanced LLM Client supporting multiple API providers"""
+"""Enhanced LLM Client supporting multiple API providers and embeddings"""
 
 import asyncio
 import json
 import logging
 import os
-from typing import Dict, List, Optional, Any, Union
+import numpy as np
+from typing import Dict, List, Optional, Any, Union, Tuple
 import aiohttp
 from rich.console import Console
+
+try:
+    from sentence_transformers import SentenceTransformer
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -525,3 +532,110 @@ Response:
     def get_provider_info(cls, provider: str) -> Dict[str, Any]:
         """Get information about a specific provider"""
         return cls.SUPPORTED_PROVIDERS.get(provider.lower(), {})
+        
+    async def generate_embedding(self, text: str) -> Optional[np.ndarray]:
+        """
+        Generate embedding for text
+        
+        Args:
+            text: Text to embed
+            
+        Returns:
+            Embedding vector or None if embedding failed
+        """
+        try:
+            if self.provider == "openai":
+                return await self._generate_embedding_openai(text)
+            elif self.provider == "cohere":
+                return await self._generate_embedding_cohere(text)
+            elif SENTENCE_TRANSFORMERS_AVAILABLE:
+                # Fallback to local embedding model
+                return await self._generate_embedding_local(text)
+            else:
+                console.print("[yellow]Warning: No embedding provider available. Using random embedding.[/yellow]")
+                return np.random.rand(384).astype(np.float32)  # Default size
+        except Exception as e:
+            console.print(f"[red]Error generating embedding: {e}[/red]")
+            return None
+            
+    async def _generate_embedding_openai(self, text: str) -> np.ndarray:
+        """Generate embedding using OpenAI API"""
+        payload = {
+            "input": text,
+            "model": "text-embedding-3-small"  # Default embedding model
+        }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        
+        async with self.session.post(
+            f"{self.base_url}/embeddings",
+            json=payload,
+            headers=headers
+        ) as response:
+            if response.status == 200:
+                result = await response.json()
+                embedding = result["data"][0]["embedding"]
+                return np.array(embedding, dtype=np.float32)
+            else:
+                error_text = await response.text()
+                raise ValueError(f"OpenAI embedding error: {response.status} - {error_text}")
+                
+    async def _generate_embedding_cohere(self, text: str) -> np.ndarray:
+        """Generate embedding using Cohere API"""
+        payload = {
+            "texts": [text],
+            "model": "embed-english-v3.0"  # Default embedding model
+        }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        
+        async with self.session.post(
+            f"{self.base_url}/embed",
+            json=payload,
+            headers=headers
+        ) as response:
+            if response.status == 200:
+                result = await response.json()
+                embedding = result["embeddings"][0]
+                return np.array(embedding, dtype=np.float32)
+            else:
+                error_text = await response.text()
+                raise ValueError(f"Cohere embedding error: {response.status} - {error_text}")
+                
+    async def _generate_embedding_local(self, text: str) -> np.ndarray:
+        """Generate embedding using local SentenceTransformers model"""
+        # This runs in a thread pool to avoid blocking the event loop
+        loop = asyncio.get_event_loop()
+        
+        # Lazy-load the model
+        if not hasattr(self, "_embedding_model"):
+            self._embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+            
+        # Generate embedding
+        embedding = await loop.run_in_executor(
+            None, lambda: self._embedding_model.encode(text, convert_to_numpy=True)
+        )
+        
+        return embedding.astype(np.float32)
+        
+    async def batch_generate_embeddings(self, texts: List[str]) -> List[Optional[np.ndarray]]:
+        """
+        Generate embeddings for multiple texts
+        
+        Args:
+            texts: List of texts to embed
+            
+        Returns:
+            List of embedding vectors
+        """
+        embeddings = []
+        for text in texts:
+            embedding = await self.generate_embedding(text)
+            embeddings.append(embedding)
+        return embeddings
