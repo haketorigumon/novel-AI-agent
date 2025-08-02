@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .chat-container {
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .user-message {
+            background-color: #e9f5ff;
+            border-radius: 18px 18px 18px 4px;
+        }
+        .agent-message {
+            background-color: #f3f4f6;
+            border-radius: 18px 18px 4px 18px;
+        }
+        .system-message {
+            background-color: #fef3c7;
+            border-radius: 8px;
+        }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .memory-item {
+            transition: all 0.2s;
+        }
+        .memory-item:hover {
+            background-color: #f3f4f6;
+        }
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.5s ease;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #6366f1;
+            color: #6366f1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-gradient text-white p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">Novel AI Agent</h1>
+                <p class="text-sm opacity-90">Self-improving long-form story generation system</p>
+            </div>
+            <div class="flex space-x-4">
+                <button id="settings-btn" class="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition">
+                    <i class="fas fa-cog mr-2"></i> Settings
+                </button>
+                <button id="help-btn" class="px-4 py-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition">
+                    <i class="fas fa-question-circle mr-2"></i> Help
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column: Chat Interface -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-gray-800">
+                            <i class="fas fa-comments text-indigo-600 mr-2"></i> Agent Chat
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button id="new-chat-btn" class="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                                <i class="fas fa-plus mr-1"></i> New Chat
+                            </button>
+                            <button id="save-chat-btn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                                <i class="fas fa-save mr-1"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-container">
+                        <div class="chat-messages p-4 space-y-4" id="chat-messages">
+                            <div class="system-message p-3 text-sm">
+                                <p><i class="fas fa-info-circle mr-1"></i> System initialized. Ready to generate stories and respond to queries.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input mt-4 border-t pt-4">
+                            <form id="chat-form" class="flex">
+                                <textarea id="user-input" class="flex-grow p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Type your message here..."></textarea>
+                                <button type="submit" class="bg-indigo-600 text-white px-4 rounded-r-lg hover:bg-indigo-700 transition">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Status and Controls -->
+            <div class="space-y-6">
+                <!-- Status Card -->
+                <div class="bg-white rounded-xl shadow-md p-4 card">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-chart-line text-indigo-600 mr-2"></i> Story Progress
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Word Count</span>
+                                <span id="word-count" class="font-medium">0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span id="progress-percentage">0%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-xs text-gray-500">Current Chapter</div>
+                                <div class="text-lg font-bold text-gray-800" id="current-chapter">1</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-xs text-gray-500">Characters</div>
+                                <div class="text-lg font-bold text-gray-800" id="character-count">0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button id="start-btn" class="flex-1 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+                                <i class="fas fa-play mr-1"></i> Start
+                            </button>
+                            <button id="pause-btn" class="flex-1 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition">
+                                <i class="fas fa-pause mr-1"></i> Pause
+                            </button>
+                            <button id="stop-btn" class="flex-1 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                                <i class="fas fa-stop mr-1"></i> Stop
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tabs Card -->
+                <div class="bg-white rounded-xl shadow-md p-4 card">
+                    <div class="flex border-b">
+                        <button class="tab-button active" data-tab="characters">
+                            <i class="fas fa-users mr-1"></i> Characters
+                        </button>
+                        <button class="tab-button" data-tab="world">
+                            <i class="fas fa-globe mr-1"></i> World
+                        </button>
+                        <button class="tab-button" data-tab="evolution">
+                            <i class="fas fa-dna mr-1"></i> Evolution
+                        </button>
+                    </div>
+                    
+                    <div class="p-2">
+                        <!-- Characters Tab -->
+                        <div id="characters-tab" class="tab-content active">
+                            <div class="space-y-2 mt-2" id="character-list">
+                                <div class="text-center text-gray-500 py-4">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i> Loading characters...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- World Tab -->
+                        <div id="world-tab" class="tab-content">
+                            <div class="space-y-3 mt-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">World Type</span>
+                                    <span class="font-medium text-gray-800" id="world-type">Unknown</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Locations</span>
+                                    <span class="font-medium text-gray-800" id="locations-count">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Active Events</span>
+                                    <span class="font-medium text-gray-800" id="active-events">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">World Mood</span>
+                                    <span class="font-medium text-gray-800" id="world-mood">Neutral</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Evolution Tab -->
+                        <div id="evolution-tab" class="tab-content">
+                            <div class="space-y-3 mt-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Status</span>
+                                    <span class="font-medium text-gray-800" id="evolution-status-text">
+                                        <span class="inline-block w-2 h-2 rounded-full bg-gray-400 mr-1"></span>
+                                        Disabled
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Generation</span>
+                                    <span class="font-medium text-gray-800" id="evolution-generation">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Total Evolutions</span>
+                                    <span class="font-medium text-gray-800" id="total-evolutions">0</span>
+                                </div>
+                                <button id="evolve-btn" class="w-full py-2 mt-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition">
+                                    <i class="fas fa-dna mr-1"></i> Trigger Evolution
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Memory Card -->
+                <div class="bg-white rounded-xl shadow-md p-4 card">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-brain text-indigo-600 mr-2"></i> Agent Memory
+                    </h2>
+                    <div class="space-y-2" id="memory-list">
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-spinner fa-spin mr-2"></i> Loading memories...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Settings</h3>
+                <button id="close-settings" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">LLM Provider</label>
+                    <select id="llm-provider" class="w-full p-2 border rounded-md">
+                        <option value="ollama">Ollama</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic</option>
+                        <option value="google">Google</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                    <input type="text" id="llm-model" class="w-full p-2 border rounded-md" placeholder="Model name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Temperature</label>
+                    <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" class="w-full">
+                    <div class="flex justify-between text-xs text-gray-500">
+                        <span>0 (Deterministic)</span>
+                        <span id="temperature-value">0.7</span>
+                        <span>1 (Creative)</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                    <input type="password" id="api-key" class="w-full p-2 border rounded-md" placeholder="Enter API key">
+                </div>
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button id="reset-settings" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">Reset</button>
+                    <button id="save-settings" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection
+        let ws = null;
+        
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = function() {
+                console.log('WebSocket connected');
+                addSystemMessage('Connected to server');
+            };
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'status_update') {
+                    updateDashboard(data.data);
+                } else if (data.type === 'agent_message') {
+                    addAgentMessage(data.content);
+                }
+            };
+            
+            ws.onclose = function() {
+                console.log('WebSocket disconnected, attempting to reconnect...');
+                addSystemMessage('Connection lost. Reconnecting...');
+                setTimeout(initWebSocket, 5000);
+            };
+            
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+                addSystemMessage('Connection error');
+            };
+        }
+        
+        // Update dashboard with new data
+        function updateDashboard(data) {
+            // Update story progress
+            document.getElementById('word-count').textContent = data.word_count?.toLocaleString() || '0';
+            document.getElementById('current-chapter').textContent = data.current_chapter || '1';
+            document.getElementById('progress-percentage').textContent = `${data.progress_percentage?.toFixed(1) || 0}%`;
+            document.getElementById('progress-fill').style.width = `${data.progress_percentage || 0}%`;
+            
+            // Update character count
+            document.getElementById('character-count').textContent = data.characters_count || '0';
+            
+            // Update evolution status
+            const evolutionEnabled = data.evolution_enabled;
+            const evolutionTextEl = document.getElementById('evolution-status-text');
+            
+            if (evolutionEnabled) {
+                evolutionTextEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span> Enabled';
+            } else {
+                evolutionTextEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-gray-400 mr-1"></span> Disabled';
+            }
+        }
+        
+        // Add a user message to the chat
+        function addUserMessage(message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'user-message p-3 ml-12 mr-2';
+            messageEl.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 mr-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <p>${message}</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(messageEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Add an agent message to the chat
+        function addAgentMessage(message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'agent-message p-3 mr-12 ml-2';
+            
+            // Process message for code blocks
+            let processedMessage = message;
+            if (message.includes('```')) {
+                processedMessage = processCodeBlocks(message);
+            }
+            
+            messageEl.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 mr-3">
+                        <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        ${processedMessage}
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(messageEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Add a system message to the chat
+        function addSystemMessage(message) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'system-message p-3 text-sm';
+            messageEl.innerHTML = `<p><i class="fas fa-info-circle mr-1"></i> ${message}</p>`;
+            chatMessages.appendChild(messageEl);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Process code blocks in messages
+        function processCodeBlocks(message) {
+            const parts = message.split('```');
+            let result = '';
+            
+            for (let i = 0; i < parts.length; i++) {
+                if (i % 2 === 0) {
+                    // Regular text
+                    result += parts[i];
+                } else {
+                    // Code block
+                    let code = parts[i];
+                    let language = '';
+                    
+                    // Check if there's a language specified
+                    const firstLineBreak = code.indexOf('\n');
+                    if (firstLineBreak > 0) {
+                        language = code.substring(0, firstLineBreak).trim();
+                        code = code.substring(firstLineBreak + 1);
+                    }
+                    
+                    result += `<pre class="code-block p-4 my-2"><code>${code}</code></pre>`;
+                }
+            }
+            
+            return result;
+        }
+        
+        // Load initial data
+        async function loadInitialData() {
+            try {
+                // Load story progress
+                const progressResponse = await fetch('/api/story/progress');
+                const progressData = await progressResponse.json();
+                if (progressData.success) {
+                    updateDashboard(progressData.data);
+                    
+                    // Add recent content as agent messages
+                    const recentContent = progressData.data.recent_content || [];
+                    if (recentContent.length > 0) {
+                        addSystemMessage('Loading recent story content...');
+                        for (const content of recentContent) {
+                            addAgentMessage(content.substring(0, 300) + '...');
+                        }
+                    }
+                }
+                
+                // Load characters
+                const charactersResponse = await fetch('/api/characters');
+                const charactersData = await charactersResponse.json();
+                if (charactersData.success) {
+                    const characterListEl = document.getElementById('character-list');
+                    const characters = charactersData.data || [];
+                    
+                    if (characters.length > 0) {
+                        characterListEl.innerHTML = characters.map(char => `
+                            <div class="memory-item p-2 rounded-lg">
+                                <div class="font-medium text-gray-800">${char.agent_id}</div>
+                                <div class="text-xs text-gray-500">${char.character_type}</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        characterListEl.innerHTML = '<div class="text-center text-gray-500 py-4">No characters created yet</div>';
+                    }
+                }
+                
+                // Load world info
+                const worldResponse = await fetch('/api/world');
+                const worldData = await worldResponse.json();
+                if (worldData.success) {
+                    const world = worldData.data;
+                    document.getElementById('world-type').textContent = world.world_type || 'Unknown';
+                    document.getElementById('locations-count').textContent = world.locations_count || '0';
+                    document.getElementById('active-events').textContent = world.active_events_count || '0';
+                    document.getElementById('world-mood').textContent = world.world_mood || 'Neutral';
+                }
+                
+                // Load evolution status
+                const evolutionResponse = await fetch('/api/evolution');
+                const evolutionData = await evolutionResponse.json();
+                if (evolutionData.success) {
+                    const evolution = evolutionData.data;
+                    document.getElementById('evolution-generation').textContent = evolution.current_generation || '0';
+                    document.getElementById('total-evolutions').textContent = evolution.total_evolutions || '0';
+                }
+                
+                // Placeholder for memory items
+                document.getElementById('memory-list').innerHTML = `
+                    <div class="memory-item p-2 rounded-lg">
+                        <div class="font-medium text-gray-800">Story Initialization</div>
+                        <div class="text-xs text-gray-500">system memory</div>
+                    </div>
+                    <div class="memory-item p-2 rounded-lg">
+                        <div class="font-medium text-gray-800">Character Creation</div>
+                        <div class="text-xs text-gray-500">episodic memory</div>
+                    </div>
+                    <div class="memory-item p-2 rounded-lg">
+                        <div class="font-medium text-gray-800">World Building</div>
+                        <div class="text-xs text-gray-500">semantic memory</div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+                addSystemMessage('Error loading data from server');
+            }
+        }
+        
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Add active class to clicked tab
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Settings modal
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            document.getElementById('settings-modal').classList.remove('hidden');
+        });
+        
+        document.getElementById('close-settings').addEventListener('click', () => {
+            document.getElementById('settings-modal').classList.add('hidden');
+        });
+        
+        // Temperature slider
+        const temperatureSlider = document.getElementById('temperature');
+        const temperatureValue = document.getElementById('temperature-value');
+        
+        temperatureSlider.addEventListener('input', () => {
+            temperatureValue.textContent = temperatureSlider.value;
+        });
+        
+        // Chat form submission
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                userInput.value = '';
+                
+                // Send message to server
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    
+                    const data = await response.json();
+                    if (!data.success) {
+                        addSystemMessage(`Error: ${data.error || 'Unknown error'}`);
+                    }
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                    addSystemMessage('Error sending message to server');
+                }
+            }
+        });
+        
+        // Control buttons
+        document.getElementById('start-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/control/start', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    addSystemMessage('Novel generation started');
+                } else {
+                    addSystemMessage(`Error: ${data.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error starting generation:', error);
+                addSystemMessage('Error starting generation');
+            }
+        });
+        
+        document.getElementById('evolve-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/control/evolve', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    addSystemMessage('Code evolution triggered');
+                } else {
+                    addSystemMessage(`Error: ${data.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error triggering evolution:', error);
+                addSystemMessage('Error triggering evolution');
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initWebSocket();
+            loadInitialData();
+            addSystemMessage('Welcome to Novel AI Agent');
+        });
+    </script>
+</body>
+</html>

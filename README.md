@@ -1,31 +1,44 @@
 # Novel AI Agent 🤖
 
-Novel AI Agent 是一款先进的 AI 代理系统，专为生成长篇小说（五百万字以上）而设计，具备自我演进和持续改进的能力。现在它已升级为功能强大的通用多智能体系统，能够协作处理各种复杂任务。该系统集成了三项核心技术：
+Novel AI Agent is an advanced AI agent system designed for generating long-form novels (over 5 million words) with self-evolution and continuous improvement capabilities. It has now been upgraded to a powerful multi-agent system that can collaborate on various complex tasks. The system integrates several core technologies and has been enhanced with features inspired by the Agent Zero framework.
 
-## 🌟 核心技术
+[![Docker Support](https://img.shields.io/badge/Docker-Ready-blue?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Multi-Agent](https://img.shields.io/badge/Multi--Agent-System-green?style=for-the-badge&logo=robot&logoColor=white)](https://github.com/agent0ai/agent-zero)
+[![Vector Memory](https://img.shields.io/badge/Vector-Memory-purple?style=for-the-badge&logo=database&logoColor=white)](https://github.com/facebookresearch/faiss)
+[![Modern UI](https://img.shields.io/badge/Modern-UI-orange?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+
+## 🌟 Core Technologies
 
 ### 1. Dynamic World Story Simulation
-基于 [Dynamic-World-Story-using-LLM-Agent-Based-Simulation](https://github.com/JackRipper01/Dynamic-World-Story-using-LLM-Agent-Based-Simulation) 的多智能体模拟系统：
-- 🎭 多个角色智能体，每个都有独特的个性和目标
-- 🎬 导演智能体，通过环境变化引导故事发展
-- 🌍 动态世界模拟，支持环境变化和事件生成
-- 📚 智能叙事合成，将多个角色贡献整合为连贯故事
+Based on [Dynamic-World-Story-using-LLM-Agent-Based-Simulation](https://github.com/JackRipper01/Dynamic-World-Story-using-LLM-Agent-Based-Simulation):
+- 🎭 Multiple character agents, each with unique personalities and goals
+- 🎬 Director agent that guides story development through environmental changes
+- 🌍 Dynamic world simulation with environmental changes and event generation
+- 📚 Intelligent narrative synthesis that integrates multiple character contributions into a coherent story
 
 ### 2. Darwin-Godel Machine Evolution
-基于 [Darwin-Godel-Machine](https://github.com/mmtmn/Darwin-Godel-Machine) 的自我改进系统：
-- 🧬 自动代码演进，基于故事生成性能
-- 🔄 持续自我改进和优化
-- 📊 性能评估和质量分析
-- 🔒 安全的代码备份和回滚机制
+Based on [Darwin-Godel-Machine](https://github.com/mmtmn/Darwin-Godel-Machine):
+- 🧬 Automatic code evolution based on story generation performance
+- 🔄 Continuous self-improvement and optimization
+- 📊 Performance evaluation and quality analysis
+- 🔒 Safe code backup and rollback mechanisms
 
-### 3. 通用多智能体系统
-借鉴 [OpenManus](https://github.com/FoundationAgents/OpenManus)、[OpenGPTs](https://github.com/langchain-ai/opengpts) 和 [CAMEL](https://github.com/camel-ai/camel) 的多智能体协作框架：
-- 🧠 多种专业智能体类型（任务型、助手型、专家型、创意型）
-- 💬 结构化智能体通信协议
-- 🛠️ 工具使用能力
-- 🗃️ 长期记忆管理
-- 🎯 任务分解与分配
-- 🔄 灵活的编排策略
+### 3. Multi-Agent System
+Based on multi-agent collaboration frameworks like [OpenManus](https://github.com/FoundationAgents/OpenManus), [OpenGPTs](https://github.com/langchain-ai/opengpts), and [CAMEL](https://github.com/camel-ai/camel):
+- 🧠 Multiple specialist agent types (task, assistant, expert, creative)
+- 💬 Structured agent communication protocol
+- 🛠️ Tool usage capabilities
+- 🗃️ Long-term memory management
+- 🎯 Task decomposition and assignment
+- 🔄 Flexible orchestration strategies
+
+### 4. Agent Zero Inspired Features
+New features inspired by the [Agent Zero](https://github.com/agent0ai/agent-zero) framework:
+- 🧠 Vector-based memory retrieval using FAISS
+- 🔄 Enhanced multi-agent communication
+- 🌐 Modern web interface with real-time updates
+- 🐳 Docker support for easy deployment
+- 📊 Improved embedding capabilities
 
 ## 🚀 功能特性
 
@@ -48,26 +61,43 @@ Novel AI Agent 是一款先进的 AI 代理系统，专为生成长篇小说（�
 - **交互式聊天**: 与多智能体系统进行对话
 - **多种LLM支持**: 支持Ollama、OpenAI、Anthropic、Google等14种LLM提供商
 
-## 📦 安装
+## 📦 Installation
 
-### 前置要求
-- Python 3.8+ (推荐 Python 3.9 或更高版本)
-- [Ollama](https://ollama.ai/) (用于本地LLM，可选)
+### Prerequisites
+- Python 3.8+ (Python 3.9 or higher recommended)
+- [Ollama](https://ollama.ai/) (for local LLM, optional)
+- Docker (for containerized deployment, optional)
 
-### 快速安装
+### Quick Installation
+
+#### Option 1: Standard Installation
 ```bash
-# 克隆仓库
+# Clone the repository
 git clone https://github.com/ineverxxx-max/novel-AI-agent.git
 cd novel-AI-agent
 
-# 运行安装脚本
+# Run the installation script
 chmod +x install.sh
 ./install.sh
 
-# 或手动安装
+# Or install manually
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
+```
+
+#### Option 2: Docker Installation (Recommended)
+```bash
+# Clone the repository
+git clone https://github.com/ineverxxx-max/novel-AI-agent.git
+cd novel-AI-agent
+
+# Build and run with Docker Compose
+docker-compose up -d
+
+# Or build and run manually
+docker build -t novel-ai-agent .
+docker run -p 12000:80 novel-ai-agent
 ```
 
 ### 配置LLM提供商
@@ -263,48 +293,125 @@ multi_agent:
   default_tools_enabled: true
 ```
 
-## 🏗️ 架构
+## 🏗️ Architecture
 
 ```text
 novel-AI-agent/
 ├── src/
-│   ├── core/                # 核心系统
-│   │   ├── novel_agent.py   # 小说生成系统
-│   │   └── multi_agent/     # 多智能体系统
+│   ├── core/                # Core system
+│   │   ├── novel_agent.py   # Novel generation system
+│   │   └── multi_agent/     # Multi-agent system
 │   │       ├── multi_agent_system.py
 │   │       └── config.py
-│   ├── agents/              # 智能体系统
-│   │   ├── base_agent.py    # 基础智能体（小说）
-│   │   ├── enhanced_base_agent.py  # 增强基础智能体（通用）
-│   │   ├── director.py      # 导演智能体
-│   │   ├── character.py     # 角色智能体
-│   │   └── types/           # 专业智能体类型
+│   ├── agents/              # Agent system
+│   │   ├── base_agent.py    # Base agent (novel)
+│   │   ├── enhanced_base_agent.py  # Enhanced base agent (general)
+│   │   ├── director.py      # Director agent
+│   │   ├── character.py     # Character agent
+│   │   └── types/           # Specialist agent types
 │   │       ├── task_agent.py
 │   │       ├── assistant_agent.py
 │   │       ├── expert_agent.py
 │   │       └── creative_agent.py
-│   ├── communication/       # 智能体通信
+│   ├── communication/       # Agent communication
 │   │   └── message.py
-│   ├── memory/              # 记忆管理
+│   ├── memory/              # Memory management
 │   │   └── memory_manager.py
-│   ├── tools/               # 工具系统
+│   ├── tools/               # Tool system
 │   │   └── tool_registry.py
-│   ├── orchestration/       # 智能体编排
+│   ├── orchestration/       # Agent orchestration
 │   │   └── orchestrator.py
-│   ├── simulation/          # 世界模拟
+│   ├── simulation/          # World simulation
 │   │   └── world.py
-│   ├── evolution/           # 代码演进
+│   ├── evolution/           # Code evolution
 │   │   └── code_evolver.py
-│   ├── web/                 # Web界面
+│   ├── web/                 # Web interface
 │   │   └── server.py
-│   └── utils/               # 工具类
+│   └── utils/               # Utilities
 │       ├── config.py
 │       └── llm_client.py
-├── templates/               # HTML模板
-├── output/                  # 输出目录
-├── backups/                 # 代码备份
-└── config.yaml              # 配置文件
+├── templates/               # HTML templates
+├── output/                  # Output directory
+├── backups/                 # Code backups
+├── Dockerfile               # Docker configuration
+├── docker-compose.yml       # Docker Compose configuration
+└── config.yaml              # Configuration file
 ```
+
+## 🚀 Agent Zero Improvements
+
+The Novel AI Agent has been enhanced with several features inspired by the [Agent Zero](https://github.com/agent0ai/agent-zero) framework. For detailed information about these improvements, see [AGENT_ZERO_IMPROVEMENTS.md](AGENT_ZERO_IMPROVEMENTS.md).
+
+### Vector-Based Memory
+
+The memory system now uses FAISS for efficient vector-based retrieval:
+
+```python
+# Example: Retrieving relevant memories
+memories = await memory_manager.retrieve_relevant_memories("What happened with the protagonist?")
+```
+
+Key features:
+- Semantic search using embeddings
+- Multiple memory types (episodic, semantic, procedural, system)
+- Memory consolidation and summarization
+- Automatic embedding of memory content
+
+### Enhanced Multi-Agent Communication
+
+The multi-agent system has been improved with better communication:
+
+```python
+# Example: Agent communication
+response = await agent.process_message(
+    sender_id="user_1",
+    content="Can you analyze this character's motivation?",
+    message_type="query"
+)
+```
+
+Key features:
+- Hierarchical agent structure
+- Improved message passing
+- Task decomposition
+- Specialized agent roles
+
+### Modern Web Interface
+
+The web interface has been completely redesigned:
+
+- Real-time updates via WebSockets
+- Interactive chat interface
+- Tabbed navigation
+- Status indicators and visualizations
+- Mobile-responsive design
+
+### Docker Support
+
+Added Docker support for easy deployment:
+
+```bash
+# Run with Docker Compose
+docker-compose up -d
+
+# Or build and run manually
+docker build -t novel-ai-agent .
+docker run -p 12000:80 novel-ai-agent
+```
+
+### Embedding Capabilities
+
+Enhanced the LLM client with embedding capabilities:
+
+```python
+# Example: Generating embeddings
+embedding = await llm_client.generate_embedding("Text to embed")
+```
+
+Key features:
+- Support for multiple providers (OpenAI, Cohere, local)
+- Fallback mechanisms
+- Batch processing
 
 ## 🔧 开发
 

@@ -44,7 +44,7 @@ class WebServer:
         @self.app.get("/", response_class=HTMLResponse)
         async def dashboard(request: Request):
             """Main dashboard"""
-            return self.templates.TemplateResponse("dashboard.html", {
+            return self.templates.TemplateResponse("dashboard_new.html", {
                 "request": request,
                 "title": "Novel AI Agent Dashboard"
             })
@@ -130,6 +130,31 @@ class WebServer:
                     return {"success": True, "message": "Code evolution triggered"}
                 else:
                     return {"success": False, "error": "Code evolution not enabled"}
+            except Exception as e:
+                return {"success": False, "error": str(e)}
+                
+        @self.app.post("/api/chat")
+        async def chat(request: Request):
+            """Process a chat message"""
+            try:
+                data = await request.json()
+                message = data.get("message", "")
+                
+                if not message:
+                    return {"success": False, "error": "Empty message"}
+                
+                # Process the message using the LLM
+                async with self.novel_agent.llm_client as client:
+                    system_prompt = "You are a helpful assistant for a novel writing AI system. You can answer questions about the story, characters, and world, and provide creative suggestions."
+                    response = await client.generate(message, system_prompt)
+                    
+                    # Send response to all connected clients
+                    await self.broadcast_update({
+                        "type": "agent_message",
+                        "content": response
+                    })
+                    
+                    return {"success": True, "message": "Message processed"}
             except Exception as e:
                 return {"success": False, "error": str(e)}
         
