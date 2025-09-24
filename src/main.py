@@ -4,6 +4,7 @@ import time
 import html
 from urllib.parse import urlparse
 
+
 def make_bookmarks(lines, title="Imported bookmarks"):
     now = int(time.time())
     header = (
@@ -19,28 +20,23 @@ def make_bookmarks(lines, title="Imported bookmarks"):
     footer = "    </DL><p>\n</DL><p>\n"
 
     body_lines = []
-    wrote = 0
+    count = 0
     seen = set()
 
     for line in lines:
         url = line.strip()
-        try:
-            parsed = urlparse(url)
-            if not parsed.netloc:
-                continue
-            if url in seen:
-                continue
-            seen.add(url)
-            title_text = html.escape(url)
-        except Exception:
+        parsed = urlparse(url)
+        if not parsed.netloc or url in seen:
             continue
+        seen.add(url)
 
+        title_text = html.escape(url)
         add_date = int(time.time())
-        a = f'        <DT><A HREF="{title_text}" ADD_DATE="{add_date}">{title_text}</A>\n'
+        a = f'        <DT><A HREF="{html.escape(url)}" ADD_DATE="{add_date}">{title_text}</A>\n'
         body_lines.append(a)
-        wrote += 1
+        count += 1
 
-    return header + "".join(body_lines) + footer, wrote
+    return header + "".join(body_lines) + footer, count
 
 
 def main():
