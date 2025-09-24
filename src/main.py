@@ -32,7 +32,7 @@ def make_bookmarks(lines, title="Imported bookmarks"):
 
         title_text = html.escape(url)
         add_date = int(time.time())
-        a = f'        <DT><A HREF="{html.escape(url)}" ADD_DATE="{add_date}">{title_text}</A>\n'
+        a = f'        <DT><A HREF="{url}" ADD_DATE="{add_date}">{title_text}</A>\n'
         body_lines.append(a)
         count += 1
 
