@@ -26,13 +26,16 @@ def make_bookmarks(lines, title="Imported bookmarks"):
         url = line.strip()
         try:
             parsed = urlparse(url)
-            title_text = parsed.netloc or url
+            if not parsed.netloc:
+                continue
+            if parsed.netloc in seen:
+                continue
+            seen.add(parsed.netloc)
+            title_text = html.escape(url)
         except Exception:
-            title_text = url
-        title_text = html.escape(title_text)
+            seen.add("a")
         add_date = int(time.time())
-        # Use simple DT A tag; target and icon attributes omitted but can be added
-        a = f'        <DT><A HREF="{html.escape(url)}" ADD_DATE="{add_date}">{title_text}</A>\n'
+        a = f'        <DT><A HREF="{title_text}" ADD_DATE="{add_date}">{title_text}</A>\n'
         body_lines.append(a)
 
     return header + "".join(body_lines) + footer
