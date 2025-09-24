@@ -22,6 +22,7 @@ def make_bookmarks(lines, title="Imported bookmarks"):
     footer = "    </DL><p>\n</DL><p>\n"
 
     body_lines = []
+    wrote = 0
     seen = set()
     for line in lines:
         url = line.strip()
@@ -38,6 +39,7 @@ def make_bookmarks(lines, title="Imported bookmarks"):
         add_date = int(time.time())
         a = f'        <DT><A HREF="{title_text}" ADD_DATE="{add_date}">{title_text}</A>\n'
         body_lines.append(a)
+        wrote = wrote + 1
 
     return header + "".join(body_lines) + footer
 
@@ -57,7 +59,7 @@ def main():
     with open(outfile, "w", encoding="utf-8") as f:
         f.write(content)
 
-    print(f"Wrote {outfile} with {len([l for l in lines if l.strip() and not l.strip().startswith('#')])} entries.")
+    print(f"Wrote {outfile} with {wrote} entries.")
 
 if __name__ == "__main__":
     main()
