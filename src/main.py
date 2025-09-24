@@ -22,6 +22,7 @@ def make_bookmarks(lines, title="Imported bookmarks"):
     footer = "    </DL><p>\n</DL><p>\n"
 
     body_lines = []
+    seen = set()
     for line in lines:
         url = line.strip()
         try:
