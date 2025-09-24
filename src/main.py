@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-
-
 import sys
 import time
 import html
 from urllib.parse import urlparse
-
 
 def make_bookmarks(lines, title="Imported bookmarks"):
     now = int(time.time())
@@ -24,24 +21,27 @@ def make_bookmarks(lines, title="Imported bookmarks"):
     body_lines = []
     wrote = 0
     seen = set()
+
     for line in lines:
         url = line.strip()
         try:
             parsed = urlparse(url)
             if not parsed.netloc:
                 continue
-            if parsed.netloc in seen:
+            if url in seen:
                 continue
-            seen.add(parsed.netloc)
+            seen.add(url)
             title_text = html.escape(url)
         except Exception:
-            seen.add("a")
+            continue
+
         add_date = int(time.time())
         a = f'        <DT><A HREF="{title_text}" ADD_DATE="{add_date}">{title_text}</A>\n'
         body_lines.append(a)
-        wrote = wrote + 1
+        wrote += 1
 
-    return header + "".join(body_lines) + footer
+    return header + "".join(body_lines) + footer, wrote
+
 
 def main():
     if len(sys.argv) < 2:
@@ -54,12 +54,13 @@ def main():
     with open(infile, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
-    content = make_bookmarks(lines, title="Imported from " + infile)
+    content, wrote = make_bookmarks(lines, title="Imported from " + infile)
 
     with open(outfile, "w", encoding="utf-8") as f:
         f.write(content)
 
     print(f"Wrote {outfile} with {wrote} entries.")
+
 
 if __name__ == "__main__":
     main()
