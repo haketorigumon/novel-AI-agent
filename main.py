@@ -96,3 +96,5 @@ def main():
                                           param += -learning_rate * dparam / np.sqrt(mem + 1e-8)
         p += seq_length
         n += 1
+if __name__ == "__main__":
+    main()
