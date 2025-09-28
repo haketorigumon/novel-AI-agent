@@ -2,11 +2,6 @@
 import numpy as np
 
 def lossFun(inputs, targets, hprev):
-  """
-  inputs,targets are both list of integers.
-  hprev is Hx1 array of initial hidden state
-  returns the loss, gradients on model parameters, and last hidden state
-  """
   xs, hs, ys, ps = {}, {}, {}, {}
   hs[-1] = np.copy(hprev)
   loss = 0
@@ -24,24 +19,20 @@ def lossFun(inputs, targets, hprev):
   dhnext = np.zeros_like(hs[0])
   for t in reversed(xrange(len(inputs))):
     dy = np.copy(ps[t])
-    dy[targets[t]] -= 1 # backprop into y. see http://cs231n.github.io/neural-networks-case-study/#grad if confused here
+    dy[targets[t]] -= 1
     dWhy += np.dot(dy, hs[t].T)
     dby += dy
-    dh = np.dot(Why.T, dy) + dhnext # backprop into h
-    dhraw = (1 - hs[t] * hs[t]) * dh # backprop through tanh nonlinearity
+    dh = np.dot(Why.T, dy) + dhnext
+    dhraw = (1 - hs[t] * hs[t]) * dh
     dbh += dhraw
     dWxh += np.dot(dhraw, xs[t].T)
     dWhh += np.dot(dhraw, hs[t-1].T)
     dhnext = np.dot(Whh.T, dhraw)
   for dparam in [dWxh, dWhh, dWhy, dbh, dby]:
-    np.clip(dparam, -5, 5, out=dparam) # clip to mitigate exploding gradients
+    np.clip(dparam, -5, 5, out=dparam)
   return loss, dWxh, dWhh, dWhy, dbh, dby, hs[len(inputs)-1]
 
 def sample(h, seed_ix, n):
-  """ 
-  sample a sequence of integers from the model 
-  h is memory state, seed_ix is seed letter for first time step
-  """
   x = np.zeros((vocab_size, 1))
   x[seed_ix] = 1
   ixes = []
@@ -84,11 +75,11 @@ def main():
         targets = [char_to_ix[ch] for ch in data[p+1:p+seq_length+1]]
         if n % 100 == 0:
             sample_ix = sample(hprev, inputs[0], 200)
-            txt = ''.join(ix_to_char[ix] for ix in sample_ix)
-            print '----\n %s \n----' % (txt, )
+            txt = "".join(ix_to_char[ix] for ix in sample_ix)
+            print(f"----\n{txt}\n----")
         loss, dWxh, dWhh, dWhy, dbh, dby, hprev = lossFun(inputs, targets, hprev)
         smooth_loss = smooth_loss * 0.999 + loss * 0.001
-        if n % 100 == 0: print 'iter %d, loss: %f' % (n, smooth_loss)
+        if n % 100 == 0: print(f"iter {n}, loss: {smooth_loss}")
         for param, dparam, mem in zip([Wxh, Whh, Why, bh, by],
                                       [dWxh, dWhh, dWhy, dbh, dby],
                                       [mWxh, mWhh, mWhy, mbh, mby]):
